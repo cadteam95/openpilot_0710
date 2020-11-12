@@ -27,7 +27,7 @@ import common.log as trace1
 LDW_MIN_SPEED = 50 * CV.KPH_TO_MS
 LANE_DEPARTURE_THRESHOLD = 0.1
 STEER_ANGLE_SATURATION_TIMEOUT = 1.0 / DT_CTRL
-STEER_ANGLE_SATURATION_THRESHOLD = 30 # Saturation Alert over Differ btw ang and des ang
+STEER_ANGLE_SATURATION_THRESHOLD = 45 # Saturation Alert over Differ btw ang and des ang
 
 SIMULATION = "SIMULATION" in os.environ
 NOSENSOR = "NOSENSOR" in os.environ
@@ -228,7 +228,7 @@ class Controls:
       self.events.add(EventName.radarCommIssue)
     elif not self.sm.all_alive_and_valid():
       self.events.add(EventName.commIssue)
-    if not self.sm['pathPlan'].mpcSolutionValid and not (EventName.laneChangeManual in self.events.names):
+    if not self.sm['pathPlan'].mpcSolutionValid and not (EventName.laneChangeManual in self.events.names) and CS.steeringAngle < 15:
       self.events.add(EventName.plannerError)
     if not self.sm['liveLocationKalman'].sensorsOK and not NOSENSOR:
       if self.sm.frame > 5 / DT_CTRL:  # Give locationd some time to receive all the inputs
